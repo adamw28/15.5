@@ -18,28 +18,24 @@ App = React.createClass({
     }.bind(this));  
     this.getGif()
     .then(result => this.setState())
-    .catch(
-        error=>reject()
-    );
+    .catch(error=>reject());
 },
   getGif: function(searchingText, callback) {  // 1.
     var GIPHY_API_URL = 'http://api.giphy.com';
     var GIPHY_PUB_KEY = 'BmgLJPU3FjYwCeAQpay7g2AuHJGQMpH4';
     var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;  // 2.
+    return new Promise((resolve,reject)=>{
     var xhr = new XMLHttpRequest();  // 3.
     xhr.open('GET', url);
     xhr.onload = function() {
-        return new Promise(
-            function(resolve,reject){
                 if (xhr.status === 200) {
-                    resolve(
-                        var data = JSON.parse(xhr.responseText).data; // 4.
-                        var gif = {  // 5.
-                            url: data.fixed_width_downsampled_url,
-                            sourceUrl: data.url
-                        };
-                        callback(gif);  // 6.
-                    );
+                    var data = JSON.parse(xhr.responseText).data; // 4.
+                    var gif = {  // 5.
+                        url: data.fixed_width_downsampled_url,
+                        sourceUrl: data.url
+                    };
+                    console.log(gif);
+                    resolve(gif);  // 6.
                 }
                 else{
                     reject(
@@ -48,8 +44,8 @@ App = React.createClass({
                         )
                     );
                 }
-            });
-    };
+            };
+    });
     xhr.send();
 },
     render: function() {
