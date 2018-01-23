@@ -17,8 +17,8 @@ App = React.createClass({
             });
     }.bind(this));  
     this.getGif()
-    .then(result => this.setState())
-    .catch(error=>reject());
+    .then(reolve => this.setState())
+    .catch(reject=>reject());
 },
   getGif: function(searchingText, callback) {  // 1.
     var GIPHY_API_URL = 'http://api.giphy.com';
@@ -35,7 +35,7 @@ App = React.createClass({
                         sourceUrl: data.url
                     };
                     console.log(gif);
-                    resolve(gif);  // 6.
+                    resolve(callback(gif));  // 6.
                 }
                 else{
                     reject(
@@ -45,8 +45,9 @@ App = React.createClass({
                     );
                 }
             };
-    });
     xhr.send();
+    });
+    
 },
     render: function() {
 
