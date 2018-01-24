@@ -1,43 +1,48 @@
 App = React.createClass({
     getInitialState() {
-    return {
-        loading: false,
-        searchingText: '',
-        gif: {}
-    };
-},handleSearch: function(searchingText) {  // 1.
-    this.setState({
-      loading: true  // 2.
-    });
-    this.getGif(searchingText, function(gif) {  // 3.
-            this.setState({  // 4
-                loading: false,  // a
-                gif: gif,  // b
-                searchingText: searchingText  // c
-            });
-    }.bind(this));  
-    this.getGif()
-    .then(reolve => this.setState())
-    .catch(reject=>reject());
-},
-  getGif: function(searchingText, callback) {  // 1.
-    var GIPHY_API_URL = 'http://api.giphy.com';
-    var GIPHY_PUB_KEY = 'BmgLJPU3FjYwCeAQpay7g2AuHJGQMpH4';
-    var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText;  // 2.
-    return new Promise((resolve,reject)=>{
-    var xhr = new XMLHttpRequest();  // 3.
-    xhr.open('GET', url);
-    xhr.onload = function() {
+        return {
+            loading: false,
+            searchingText: '',
+            gif: {}
+        };
+    },
+    handleSearch: function(searchingText) {
+        this.setState({
+            loading: true
+        });
+
+        this.getGif(searchingText)
+            .then(
+                gif => {
+                    this.setState({
+                        loading: false, 
+                        gif,
+                        searchingText
+                    });
+                })
+            .catch( err => {
+                console.log('catch error', err);
+            })
+    }, 
+    getGif: function(searchingText) {
+        var GIPHY_API_URL = 'http://api.giphy.com';
+        var GIPHY_PUB_KEY = 'BmgLJPU3FjYwCeAQpay7g2AuHJGQMpH4';
+        var url = GIPHY_API_URL + '/v1/gifs/random?api_key=' + GIPHY_PUB_KEY + '&tag=' + searchingText; // 2.
+        return new Promise((resolve, reject) => {
+            var xhr = new XMLHttpRequest();
+            
+            xhr.open('GET', url);
+
+
+            xhr.onload = function() {
                 if (xhr.status === 200) {
-                    var data = JSON.parse(xhr.responseText).data; // 4.
-                    var gif = {  // 5.
+                    var data = JSON.parse(xhr.responseText).data;
+                    var gif = { // 5.
                         url: data.fixed_width_downsampled_url,
                         sourceUrl: data.url
                     };
-                    console.log(gif);
-                    resolve(callback(gif));  // 6.
-                }
-                else{
+                    resolve(gif);
+                } else {
                     reject(
                         new Error(
                             this.statusText
@@ -45,10 +50,10 @@ App = React.createClass({
                     );
                 }
             };
-    xhr.send();
-    });
-    
-},
+            xhr.send();
+        });
+
+    },
     render: function() {
 
         var styles = {
